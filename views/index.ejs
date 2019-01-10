@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/collectionLog.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+  <style>
+    .item {
+      height: 100px;
+      margin-bottom: 20px;
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    $(() => {
+      let num = Math.round(Math.random() * 50)
+      let i = 0
+      while (i < num) {
+        let div = `<div class="item" clog="click,visit" clog-region="foo" clog-pos="bar_${i}">${i}/${num}</div>`
+        $('#app').append(div)
+        i += 1
+      }
+    })
+  </script>
+</body>
+
+</html>
