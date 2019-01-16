@@ -20,13 +20,21 @@ function CollectionLog() {
     broV: '',
     w: 0,
     h: 0,
+    x: 0,
+    y: 0,
     site: '',
     href: '',
     spa: 'no',
     uid: '',
     stay: 0,
     uid: '',
+    type: '',
+    reg: '',
+    pos: '',
+    ex: ''
   }
+  this.visitTags = document.querySelectorAll('.clog-visit') || []
+  this.windowHeight = window.innerHeight || window.screen.availHeight || 0
   var scripts = document.querySelector('script[is-clog]')
   if (scripts) {
     var args = this.formatUrl(scripts.src)
@@ -37,14 +45,10 @@ function CollectionLog() {
   }
 }
 
-// 选择器
-CollectionLog.prototype.$ = function (name) {
-  return document.querySelector(name)
-}
-
 // 逗留时长
 CollectionLog.prototype.getStayLong = function () {
-  return (new Date().getTime() - this.initialTime)
+  var stay = Math.ceil((new Date().getTime() - this.initialTime) / 1000)
+  return stay
 }
 
 // json2params
@@ -142,65 +146,139 @@ CollectionLog.prototype.initOptions = function () {
 // 加入事件监听
 CollectionLog.prototype.addEvent = function () {
   var that = this
+  var timer = null
+
+  // dom节点变化
+  document.removeEventListener('DOMSubtreeModified', function () { })
+  document.addEventListener('DOMSubtreeModified', function (e) {
+    var visitTags = document.querySelectorAll('.clog-visit')
+    if (visitTags.length != that.visitTags.length) {
+      that.visitTags = visitTags
+    }
+  })
+
   // 点击事件
   document.body.removeEventListener('click', function () { })
   document.body.addEventListener('click', function (e) {
-    var target = e.target
-    if (target.attributes && target.attributes.clog && target.attributes.clog.value.indexOf('click') > -1) {
-      that.clickLog(target)
+    if (e.target.className.indexOf('clog-click') > -1) {
+      that.clickLog(e)
     }
   })
 
   // 曝光事件
   document.removeEventListener('scroll', function () { })
   document.addEventListener('scroll', function (e) {
-    // console.log(e)
+    if (timer) {
+      clearTimeout(timer)
+      timer = setTimeout(function () {
+        afterTimmer()
+      }, 500)
+    } else {
+      afterTimmer()
+    }
+
+    function afterTimmer() {
+      timer = setTimeout(function () {
+        var visitTags = document.querySelectorAll('.clog-visit')
+        if (visitTags.length) {
+          that.visitLog(e)
+        }
+      }, 500)
+    }
+
   })
 
   // 错误事件
   window.removeEventListener('error', function () { })
   window.addEventListener('error', function (e) {
-    console.log(e)
   })
 
 }
 
 // 点击上报
-CollectionLog.prototype.clickLog = function (target) {
-  console.dir(target.attributes)
+CollectionLog.prototype.clickLog = function (e) {
+  var target = e.target
   var region = target.attributes['clog-region'].value || ''
   var pos = target.attributes['clog-pos'].value || ''
-  this.sendLog('click', region, pos)
+  var pageX = e.pageX
+  var pageY = e.pageY
+  var extraInfo = target.attributes['clog-ex'].value || ''
+  this.sendLog('click', region, pos, pageX, pageY, extraInfo)
 }
 
 // 曝光上报
-CollectionLog.prototype.visitLog = function (target) {
-  console.dir(target.attributes)
+CollectionLog.prototype.visitLog = function (e) {
+  var scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop || document.scrollingElement.scrollTop || 0;
+  // var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || document.scrollingElement.scrollHeight || 0;
+  var hasVisit = false
+  var result = {
+    region: [],
+    pos: [],
+    pageX: [],
+    pageY: [],
+    extraInfo: []
+  }
+  for (var i = 0; i < this.visitTags.length; i++) {
+    var tag = this.visitTags[i]
+    if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + this.windowHeight) >= (tag.offsetTop + tag.offsetHeight))) {
+      hasVisit = true
+      var region = tag.attributes['clog-region'].value || ''
+      var pos = tag.attributes['clog-pos'].value || ''
+      var pageX = 0
+      var pageY = scrollTop
+      var extraInfo = tag.attributes['clog-ex'].value || ''
+      result.region.push(region)
+      result.pos.push(pos)
+      result.pageX.push(pageX)
+      result.pageY.push(pageY)
+      result.extraInfo.push(extraInfo)
+    }
+  }
+  if (hasVisit) {
+    this.sendLog('visit', result.region, result.pos, result.pageX, result.pageY, result.extraInfo)
+  }
 }
 
 // xhr请求
-CollectionLog.prototype.sendLog = function (type, region, pos) {
+CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, extraInfo) {
   // 获取uid
   if (!this.options.uid) {
     var cookie = document.cookie
     if (/uid=[\w\d-_=\.]+\;/i.test(document.cookie)) {
       var uidArr = document.cookie.match(/uid=[\w\d-_=\.]+\;/i)
       if (uidArr && uidArr.length) {
-        this.options.uid = uidArr[0].replace('uid=', '').replace(';', '')
+        this.options.uid = uidArr[0].replace('uid=', '').replace(';', '') || ''
       }
     } else if (localStorage.getItem('uid')) {
-      this.options.uid = localStorage.getItem('uid')
+      this.options.uid = localStorage.getItem('uid') || ''
     } else if (sessionStorage.getItem('uid')) {
-      this.options.uid = sessionStorage.getItem('uid')
+      this.options.uid = sessionStorage.getItem('uid') || ''
     }
   }
   // url拼接
   var url = this.postUrl
-  var tempOpt = { type: type || 'click' }
+  var tempOpt = new Object()
   for (var i in this.options) {
     tempOpt[i] = this.options[i]
   }
+
+  if (typeof region == 'object' && region instanceof Array) {
+    region = region.join(',')
+  }
+  if (typeof region == 'pos' && region instanceof Array) {
+    region = region.join(',')
+  }
+  if (typeof region == 'extraInfo' && region instanceof Array) {
+    region = region.join(',')
+  }
+
   tempOpt['stay'] = this.getStayLong()
+  tempOpt['type'] = type || ''
+  tempOpt['reg'] = region || ''
+  tempOpt['pos'] = pos || ''
+  tempOpt['x'] = pageX || ''
+  tempOpt['y'] = pageY || ''
+  tempOpt['ex'] = extraInfo || ''
   url += this.formatOptions(tempOpt)
   // 请求
   if (window.fetch) {
@@ -210,35 +288,13 @@ CollectionLog.prototype.sendLog = function (type, region, pos) {
   } else {
 
   }
-  console.log(this.options)
 }
 
 // 窗口关闭监听
 window.addEventListener('beforeunload', function (e) {
-  console.log(e)
 })
 
 // 窗口打开监听
 window.addEventListener('load', function () {
   window.__clog = new CollectionLog()
-  console.log(__clog)
-
 })
-/**
-  cc:0
-  ck:1
-  cl:24-bit
-  ds:375x603
-  vl:603
-  ep:{"netAll":11,"netDns":0,"netTcp":0,"srv":13,"dom":370,"loadEvent":606}
-  et:87
-  ja:0
-  ln:zh-cn
-  lo:0
-  lt:1547126021
-  rnd:1763328410
-  si:91de53dcd5c2a79232daa1c1b9387937
-  su:http://h5.youyinian.cn/userNew/?!=
-  v:1.2.38
-  lv:2
-**/

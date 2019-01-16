@@ -13,21 +13,83 @@
       height: 100px;
       margin-bottom: 20px;
       background-color: #f1f1f1;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 10px;
+      color: #000;
+      text-shadow: 0 0 3px #fff;
+    }
+
+    .item.clog-visit {
+      animation: mymove 2s infinite linear;
+    }
+
+    @keyframes mymove {
+      0% {
+        box-shadow: 0 0 20px 10px #0066ff;
+      }
+
+      50% {
+        box-shadow: 0 0 20px 10px #ff6600;
+      }
+
+      100% {
+        box-shadow: 0 0 20px 10px #0066ff;
+      }
     }
   </style>
 </head>
 
 <body>
+  <button id="addMore">add more</button>
   <div id="app"></div>
   <script>
-    $(() => {
-      let num = Math.round(Math.random() * 50)
+    let num = Math.round(Math.random() * 100)
+
+    function randomColor() {
+      let r = Math.round(Math.random() * 255).toString(16)
+      let g = Math.round(Math.random() * 255).toString(16)
+      let b = Math.round(Math.random() * 255).toString(16)
+      r.length == 2 ? r : r = '0' + r.substr(0, 1)
+      g.length == 2 ? g : g = '0' + g.substr(0, 1)
+      b.length == 2 ? b : b = '0' + b.substr(0, 1)
+      return r + g + b
+    }
+
+    function addItem(startNum = 0, count = 10) {
       let i = 0
-      while (i < num) {
-        let div = `<div class="item" clog="click,visit" clog-region="foo" clog-pos="bar_${i}">${i}/${num}</div>`
+      let bgColor = randomColor()
+      while (i < count) {
+        let randomStr = (Math.random() * (Math.random() * Date.now())).toFixed(2)
+        let isVisit = Boolean(Math.round(Math.random()))
+        let div = `<div style="background: #${bgColor};" 
+                        id="item_${startNum + i}" 
+                        class="item clog-click ${isVisit ? 'clog-visit' : ''}" 
+                        clog 
+                        clog-region="foo_${startNum + i}" 
+                        clog-pos="bar_${startNum + i}" 
+                        clog-ex="${randomStr}">
+                        ${startNum + i}/${i + 1}/${count}
+                        <br>
+                        ${randomStr}
+                        <br>
+                        isVisit: ${isVisit}
+                        <br>
+                        id: item_${startNum + i}
+                  </div>`
+
         $('#app').append(div)
         i += 1
       }
+      num = count + startNum
+    }
+
+    $('#addMore').click(() => {
+      addItem(num, Math.round(Math.random() * 10))
+    })
+
+    $(() => {
+      addItem(0, num)
     })
   </script>
 </body>
