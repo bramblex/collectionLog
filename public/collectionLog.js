@@ -27,7 +27,6 @@ function CollectionLog() {
     spa: 'no',
     uid: '',
     stay: 0,
-    uid: '',
     type: '',
     reg: '',
     pos: '',
