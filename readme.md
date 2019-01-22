@@ -7,10 +7,7 @@
 2. 曝光
 3. 错误日志
 4. 直接发送钩子
-
-### 即将支持:
 5. pv记录
-6. 其他事件
 
 ### demo启动  
 安装完pagejson中的依赖后,启动koa服务在3001端口
@@ -41,7 +38,7 @@ npm run dev
   pos: '',    // pos: 排序信息,小分类信息  
   ex: '',     // 额外信息,  
   now: '',    // 上报时间,  
-  pvid: '',   // pvid
+  pid: '',   // pv uuid
 ```
 
 ### 使用方法:  
@@ -63,22 +60,25 @@ clog-visit: 用于收集曝光日志
 clog: 必须要有此属性,用于判断该元素是否需要收集日志  
 clog-region: 分类信息,字符串  
 clog-pos: 排序信息/小分类信息,字符串  
-clog-ex: 额外信息,字符串  
+clog-ex: 额外信息,字符串
+clog-page: 页面名字,默认取document.title  
 ```
 <div class="clog-click" 
       clog 
       clog-region="foo" 
       clog-pos="bar" 
+      clog-page="some"  
       clog-ex="otherInfo">点击日志收集</div>
 
 <div class="clog-visit" 
       clog 
       clog-region="foo" 
       clog-pos="bar" 
+      clog-page="some"  
       clog-ex="otherInfo">曝光日志收集</div>
 ```
 
 3. 手动调用发送钩子
 ```
-window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo)
+window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo, page)
 ```

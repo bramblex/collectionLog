@@ -32,7 +32,7 @@ function CollectionLog() {
     pos: '',
     ex: '',
     now: '',
-    pvid: '',
+    pid: '',
     page: ''
   }
   this.visitTags = document.querySelectorAll('.clog-visit') || []
@@ -68,6 +68,29 @@ CollectionLog.prototype.formatOptions = function (options) {
   }
   params = params.substr(0, params.length - 1)
   return params
+}
+
+// pv uuid
+CollectionLog.prototype.makePvId = function () {
+  var rnds = new Array(16);
+  for (var i = 0, r; i < 16; i++) {
+    if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+    rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+  }
+
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+  console.log(rnds)
+  var buf = ''
+  for (var ii = 0; ii < 16; ii++) {
+    num = rnds[ii]
+    if(ii%4 == 0 && ii > 0) {
+      buf += '-'
+    }
+    buf += num.toString(16)
+  }
+  console.log(buf)
+  return buf
 }
 
 // params2json
@@ -135,6 +158,7 @@ CollectionLog.prototype.initOptions = function () {
   this.options.h = document.body.clientHeight || screen.availHeight || 0
   this.options.site = location.origin || location.host || ''
   this.options.href = location.href
+  this.options.pid = this.makePvId()
   if (location.href.indexOf('#/') > -1) {
     this.options.spa = 'yes'
   } else {
@@ -213,11 +237,11 @@ CollectionLog.prototype.addEvent = function () {
 // 点击上报
 CollectionLog.prototype.clickLog = function (e) {
   var target = e.target
-  var region = target.attributes['clog-region'] && target.attributes['clog-region'].value || ''
-  var pos = target.attributes['clog-pos'] && target.attributes['clog-pos'].value || ''
+  var region = target.attributes['clog-region'] && target.attributes['clog-region'].value || '0'
+  var pos = target.attributes['clog-pos'] && target.attributes['clog-pos'].value || '0'
   var pageX = e.pageX
   var pageY = e.pageY
-  var extraInfo = target.attributes['clog-ex'] && target.attributes['clog-ex'].value || ''
+  var extraInfo = target.attributes['clog-ex'] && target.attributes['clog-ex'].value || '0'
   var page = target.attributes['clog-page'] && target.attributes['clog-page'].value || document.title || ''
   this.sendLog('click', region, pos, pageX, pageY, extraInfo, page)
 }
@@ -230,8 +254,8 @@ CollectionLog.prototype.visitLog = function (e) {
   var result = {
     region: [],
     pos: [],
-    pageX: [],
-    pageY: [],
+    pageX: 0,
+    pageY: scrollTop,
     extraInfo: [],
     page: []
   }
@@ -239,16 +263,16 @@ CollectionLog.prototype.visitLog = function (e) {
     var tag = this.visitTags[i]
     if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + this.windowHeight) >= (tag.offsetTop + tag.offsetHeight))) {
       hasVisit = true
-      var region = tag.attributes['clog-region'] && tag.attributes['clog-region'].value || ''
-      var pos = tag.attributes['clog-pos'] && tag.attributes['clog-pos'].value || ''
-      var pageX = 0
-      var pageY = scrollTop
-      var extraInfo = tag.attributes['clog-ex'] && tag.attributes['clog-ex'].value || ''
+      var region = tag.attributes['clog-region'] && tag.attributes['clog-region'].value || '0'
+      var pos = tag.attributes['clog-pos'] && tag.attributes['clog-pos'].value || '0'
+      // var pageX = 0
+      // var pageY = scrollTop
+      var extraInfo = tag.attributes['clog-ex'] && tag.attributes['clog-ex'].value || '0'
       var page = tag.attributes['clog-page'] && tag.attributes['clog-page'].value || document.title || ''
       result.region.push(region)
       result.pos.push(pos)
-      result.pageX.push(pageX)
-      result.pageY.push(pageY)
+      // result.pageX.push(pageX)
+      // result.pageY.push(pageY)
       result.extraInfo.push(extraInfo)
       result.page.push(page)
     }
@@ -344,4 +368,5 @@ window.addEventListener('beforeunload', function (e) {
 // 窗口打开监听
 window.addEventListener('load', function () {
   window.__clog = new CollectionLog()
+  console.log(__clog.options)
 })
