@@ -32,7 +32,8 @@ function CollectionLog() {
     pos: '',
     ex: '',
     now: '',
-    pvid: ''
+    pvid: '',
+    page: ''
   }
   this.visitTags = document.querySelectorAll('.clog-visit') || []
   this.windowHeight = window.innerHeight || window.screen.availHeight || 0
@@ -212,12 +213,13 @@ CollectionLog.prototype.addEvent = function () {
 // 点击上报
 CollectionLog.prototype.clickLog = function (e) {
   var target = e.target
-  var region = target.attributes['clog-region'].value || ''
-  var pos = target.attributes['clog-pos'].value || ''
+  var region = target.attributes['clog-region'] && target.attributes['clog-region'].value || ''
+  var pos = target.attributes['clog-pos'] && target.attributes['clog-pos'].value || ''
   var pageX = e.pageX
   var pageY = e.pageY
-  var extraInfo = target.attributes['clog-ex'].value || ''
-  this.sendLog('click', region, pos, pageX, pageY, extraInfo)
+  var extraInfo = target.attributes['clog-ex'] && target.attributes['clog-ex'].value || ''
+  var page = target.attributes['clog-page'] && target.attributes['clog-page'].value || document.title || ''
+  this.sendLog('click', region, pos, pageX, pageY, extraInfo, page)
 }
 
 // 曝光上报
@@ -230,26 +232,30 @@ CollectionLog.prototype.visitLog = function (e) {
     pos: [],
     pageX: [],
     pageY: [],
-    extraInfo: []
+    extraInfo: [],
+    page: []
   }
   for (var i = 0; i < this.visitTags.length; i++) {
     var tag = this.visitTags[i]
     if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + this.windowHeight) >= (tag.offsetTop + tag.offsetHeight))) {
       hasVisit = true
-      var region = tag.attributes['clog-region'].value || ''
-      var pos = tag.attributes['clog-pos'].value || ''
+      var region = tag.attributes['clog-region'] && tag.attributes['clog-region'].value || ''
+      var pos = tag.attributes['clog-pos'] && tag.attributes['clog-pos'].value || ''
       var pageX = 0
       var pageY = scrollTop
-      var extraInfo = tag.attributes['clog-ex'].value || ''
+      var extraInfo = tag.attributes['clog-ex'] && tag.attributes['clog-ex'].value || ''
+      var page = tag.attributes['clog-page'] && tag.attributes['clog-page'].value || document.title || ''
       result.region.push(region)
       result.pos.push(pos)
       result.pageX.push(pageX)
       result.pageY.push(pageY)
       result.extraInfo.push(extraInfo)
+      result.page.push(page)
     }
   }
   if (hasVisit) {
-    this.sendLog('visit', result.region, result.pos, result.pageX, result.pageY, result.extraInfo)
+
+    this.sendLog('visit', result.region, result.pos, result.pageX, result.pageY, result.extraInfo, result.page)
   }
 }
 
@@ -259,11 +265,12 @@ CollectionLog.prototype.errorLog = function (obj) {
     extraInfo += ('msg:' + obj.msg)
     extraInfo += (';file:' + obj.file)
   }
-  this.sendLog('error', 'error', '', '', '', extraInfo)
+  var page = document.title || ''
+  this.sendLog('error', 'error', '', '', '', extraInfo, page)
 }
 
 // xhr请求
-CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, extraInfo) {
+CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, extraInfo, page) {
   // 获取uid
   if (!this.options.uid) {
     var cookie = document.cookie
@@ -288,11 +295,14 @@ CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, ext
   if (typeof region == 'object' && region instanceof Array) {
     region = region.join(',')
   }
-  if (typeof region == 'pos' && region instanceof Array) {
-    region = region.join(',')
+  if (typeof pos == 'pos' && pos instanceof Array) {
+    pos = pos.join(',')
   }
-  if (typeof region == 'extraInfo' && region instanceof Array) {
-    region = region.join(',')
+  if (typeof extraInfo == 'object' && extraInfo instanceof Array) {
+    extraInfo = extraInfo.join(',')
+  }
+  if (typeof page == 'object' && page instanceof Array) {
+    page = page.join(',')
   }
 
   tempOpt['stay'] = this.getStayLong()
@@ -302,6 +312,7 @@ CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, ext
   tempOpt['x'] = pageX || ''
   tempOpt['y'] = pageY || ''
   tempOpt['ex'] = extraInfo || ''
+  tempOpt['page'] = page || ''
   tempOpt['now'] = new Date().getTime()
   url += this.formatOptions(tempOpt)
   // 请求

@@ -7,10 +7,11 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect&classifyType=y" is-clog></script>
+  <!-- <script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect&classifyType=y" is-clog></script> -->
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
   <style>
     .item {
-      height: 100px;
+      /* height: 100px; */
       margin-bottom: 20px;
       background-color: #f1f1f1;
       box-sizing: border-box;
@@ -18,6 +19,10 @@
       border-radius: 10px;
       color: #000;
       text-shadow: 0 0 3px #fff;
+    }
+
+    .item.clog-click {
+      border: 2px dashed #000;
     }
 
     .item.clog-visit {
@@ -65,21 +70,29 @@
       let bgColor = randomColor()
       while (i < count) {
         let randomStr = (Math.random() * (Math.random() * Date.now())).toFixed(2)
+        let isClick = Boolean(Math.round(Math.random()))
         let isVisit = Boolean(Math.round(Math.random()))
+        let hasRegion = Boolean(Math.round(Math.random()))
+        let hasPos = Boolean(Math.round(Math.random()))
+        let hasEx = Boolean(Math.round(Math.random()))
+        let hasPage = Boolean(Math.round(Math.random()))
         let div = `<div style="background: #${bgColor};" 
                         id="item_${startNum + i}" 
-                        class="item clog-click ${isVisit ? 'clog-visit' : ''}" 
+                        class="item ${isClick ? 'clog-click' : ''} ${isVisit ? 'clog-visit' : ''}" 
                         clog 
-                        clog-region="foo_${startNum + i}" 
-                        clog-pos="bar_${startNum + i}" 
-                        clog-ex="${randomStr}">
+                        ${hasRegion ? 'clog-region' : 'empty'}="region${startNum + i}" 
+                        ${hasPos ? 'clog-pos' : 'empty'}="pos${startNum + i}" 
+                        ${hasEx ? 'clog-ex' : 'empty'}="ex${startNum + i}" 
+                        ${hasPage ? 'clog-page' : 'empty'}="ex${startNum + i}">
                         ${startNum + i}/${i + 1}/${count}
                         <br>
                         ${randomStr}
                         <br>
-                        isVisit: ${isVisit}
+                        isVisit: ${isVisit} | isClick: ${isClick}
                         <br>
                         id: item_${startNum + i}
+                        <br>
+                        reg: ${hasPage} | pos: ${hasPos} | ex: ${hasEx} | page: ${hasPage}
                   </div>`
 
         $('#app').append(div)
