@@ -30,14 +30,18 @@ function CollectionLog() {
     type: '',
     reg: '',
     pos: '',
-    ex: ''
+    ex: '',
+    now: '',
+    pvid: ''
   }
   this.visitTags = document.querySelectorAll('.clog-visit') || []
   this.windowHeight = window.innerHeight || window.screen.availHeight || 0
+  this.classifyType = false
   var scripts = document.querySelector('script[is-clog]')
   if (scripts) {
     var args = this.formatUrl(scripts.src)
     this.postUrl = args.url
+    this.classifyType = args.classifyType && args.classifyType == 'y'
     this.options.app = args.app
     this.options.appid = args.appid
     this.initOptions()
@@ -190,7 +194,18 @@ CollectionLog.prototype.addEvent = function () {
   // 错误事件
   window.removeEventListener('error', function () { })
   window.addEventListener('error', function (e) {
-  })
+    that.errorLog({
+      msg: e.message || 'no message',
+      file: e.filename || 'no file'
+    })
+  }, true)
+  window.removeEventListener('unhandledrejection', function () { })
+  window.addEventListener('unhandledrejection', function (e) {
+    that.errorLog({
+      msg: e.reason || 'no message',
+      file: e.target && e.target.name || 'no file'
+    })
+  }, true)
 
 }
 
@@ -238,6 +253,15 @@ CollectionLog.prototype.visitLog = function (e) {
   }
 }
 
+CollectionLog.prototype.errorLog = function (obj) {
+  var extraInfo = ''
+  if (obj) {
+    extraInfo += ('msg:' + obj.msg)
+    extraInfo += (';file:' + obj.file)
+  }
+  this.sendLog('error', 'error', '', '', '', extraInfo)
+}
+
 // xhr请求
 CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, extraInfo) {
   // 获取uid
@@ -255,7 +279,7 @@ CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, ext
     }
   }
   // url拼接
-  var url = this.postUrl
+  var url = this.classifyType ? this.postUrl + '/' + type : this.postUrl
   var tempOpt = new Object()
   for (var i in this.options) {
     tempOpt[i] = this.options[i]
@@ -278,14 +302,27 @@ CollectionLog.prototype.sendLog = function (type, region, pos, pageX, pageY, ext
   tempOpt['x'] = pageX || ''
   tempOpt['y'] = pageY || ''
   tempOpt['ex'] = extraInfo || ''
+  tempOpt['now'] = new Date().getTime()
   url += this.formatOptions(tempOpt)
   // 请求
   if (window.fetch) {
     fetch(url)
-  } else if (1) {
-
+  } else if (window.XMLHttpRequest) {
+    var oReq = new XMLHttpRequest()
+    oReq.addEventListener("load", function () {
+      oReq = null
+    })
+    oReq.open("GET", url)
+    oReq.send()
   } else {
-
+    var img = new Image()
+    img.src = url
+    img.onload = function () {
+      img = null
+    }
+    img.onerror = function () {
+      img = null
+    }
   }
 }
 

@@ -17,20 +17,20 @@ const router = require('koa-router')()
 // })
 
 router.get('/', async (ctx, next) => {
-  console.log('请求')
-
-  ctx.cookies.set('name', 'tobi')
   await ctx.render('index', {})
 })
 
 router.get('/test', async (ctx, next) => {
-  console.log('请求')
-  ctx.cookies.set('name', 'tobi')
-  await ctx.render('index', {})
+  await ctx.render('test', {})
 })
 
 router.get('/collect', async (ctx, next) => {
-  console.log('请求', ctx.request.query)
+  console.log('请求参数', ctx.request.query)
+  ctx.body = 'ok'
+})
+
+router.get('/collect/*', async (ctx, next) => {
+  console.log('请求参数', ctx.request.query)
   ctx.body = 'ok'
 })
 

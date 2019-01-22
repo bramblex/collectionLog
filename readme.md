@@ -5,10 +5,10 @@
 ### 目前支持收集的日志类型:
 1. 点击
 2. 曝光
-
-### 即将支持:
 3. 错误日志
 4. 直接发送钩子
+
+### 即将支持:
 5. pv记录
 6. 其他事件
 
@@ -34,12 +34,14 @@ npm run dev
   site: '',   // hostname
   href: '',   // 网站完整url
   spa: 'no',  // 是否带#号的spa
-  uid: '',    // userid
+  uid: '',    // userid, 会取cookie/localstorage/sessionstorage中的uid字段
   stay: 0,    // 逗留时长
   type: '',   // 日志类型
-  reg: '',    // region: 分类信息
-  pos: '',    // pos: 排序信息,小分类信息
-  ex: '',     // 额外信息
+  reg: '',    // region: 分类信息  
+  pos: '',    // pos: 排序信息,小分类信息  
+  ex: '',     // 额外信息,  
+  now: '',    // 上报时间,  
+  pvid: '',   // pvid
 ```
 
 ### 使用方法:  
@@ -48,6 +50,7 @@ npm run dev
 appid: 自定义一个appid给当前客户端  
 app: 自定义一个app名称给当前客户端  
 url: 发送收集信息到后台的url  
+classifyType: 请求时url是否加上分类,如果开启则填classifyType=y,不开启则不加入该参数
 ```
 <script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect" is-clog></script>
 ```
@@ -73,4 +76,9 @@ clog-ex: 额外信息,字符串
       clog-region="foo" 
       clog-pos="bar" 
       clog-ex="otherInfo">曝光日志收集</div>
+```
+
+3. 手动调用发送钩子
+```
+window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo)
 ```

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect" is-clog></script>
+  <script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect&classifyType=y" is-clog></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
   <style>
     .item {
@@ -44,6 +44,10 @@
   <button id="addMore">add more</button>
   <div id="app"></div>
   <script>
+    /**
+     * 示例代码,可以忽略
+     * 主要看页面上的div,他们都具有className = clog-xxx, 而且属性上也有clog相关参数
+     * */
     let num = Math.round(Math.random() * 100)
 
     function randomColor() {
