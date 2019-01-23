@@ -16,20 +16,11 @@ const router = require('koa-router')()
 // 	}
 // })
 
-router.get('/', async (ctx, next) => {
+router.all('/', async (ctx, next) => {
   await ctx.render('index', {})
 })
 
-router.get('/test', async (ctx, next) => {
-  await ctx.render('test', {})
-})
-
-router.get('/collect', async (ctx, next) => {
-  console.log('请求参数', ctx.request.query)
-  ctx.body = 'ok'
-})
-
-router.get('/collect/*', async (ctx, next) => {
+router.all('/collect/*', async (ctx, next) => {
   console.log('请求参数', ctx.request.query)
   ctx.body = 'ok'
 })
