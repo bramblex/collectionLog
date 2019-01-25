@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "client:build": "webpack --config webpack.config.js --mode=production",
-    "client:watch": "webpack --config webpack.config.js --watch --mode=development"
+    "client:watch": "webpack --config webpack.config.js --mode=development --watch"
   },
   "dependencies": {
+    "@types/navigation": "^4.0.3",
     "debug": "^2.6.3",
     "ejs": "^2.5.5",
     "koa": "^2.2.0",

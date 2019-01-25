@@ -76,6 +76,14 @@ export default {
       res.browser = 'wechat'
       return res
     }
+    if (/UCBrowser/gi.test(ua)) {
+      res.browser = 'UCBrowser'
+      return res
+    }
+    if (/QQBrowser/gi.test(ua)) {
+      res.browser = 'QQBrowser'
+      return res
+    }
     if (/chrome/gi.test(ua)) {
       res.browser = 'chrome'
       let exceRes = /chrome\/\w+/gi.exec(ua)
@@ -99,6 +107,18 @@ export default {
       let exceRes = /edge\/\w+/gi.exec(ua)
       let borwserVersion = (exceRes && exceRes.length > 0) ? (Number(exceRes[0].replace('edge/', '')) || 0) : 0
       res.browserVersion = borwserVersion
+      return res
+    }
+    if (/version\/([\d.]+).*safari/gi.test(ua)) {
+      res.browser = 'safari'
+      return res
+    }
+    if (/opera/gi.test(ua)) {
+      res.browser = 'opera'
+      return res
+    }
+    if (/webkit/gi.test(ua)) {
+      res.browser = 'webkit'
       return res
     }
     return res

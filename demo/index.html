@@ -1,13 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>收集日志前端页面引入demo</title>
   <script src="../dist/collectionLog.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+  <style>
+    .item {
+      /* height: 100px; */
+      margin-bottom: 20px;
+      background-color: #d9d9d9;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 10px;
+      color: #000;
+      text-shadow: 0 0 3px #fff;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      height: 40px;
+    }
+  </style>
 </head>
+
 <body>
-  
+  <div id="app"></div>
+  <button id="addMore">add more</button>
+  <script>
+    /**
+     * 示例代码,可以忽略
+     * 主要看页面上的div,他们都具有className = clog-xxx, 而且属性上也有clog相关参数
+     * */
+
+    let num = Math.round(Math.random() * 100)   // 随机在页面插入N个列表div
+
+    // 插入方法
+    function addItem(startNum = 0, count = 10) {
+      let i = 0
+      while (i < count) {
+        let randomStr = (Math.random() * (Math.random() * Date.now())).toFixed(2)
+        let isClick = Boolean(Math.round(Math.random()))
+        let isVisit = Boolean(Math.round(Math.random()))
+        let hasRegion = Boolean(Math.round(Math.random()))
+        let hasPos = Boolean(Math.round(Math.random()))
+        let hasEx = Boolean(Math.round(Math.random()))
+        let hasPage = Boolean(Math.round(Math.random()))
+        let div = `<div id="item_${startNum + i}" 
+                        class="item ${isClick ? 'clog-click' : ''} ${isVisit ? 'clog-visit' : ''}" 
+                        clog 
+                        ${hasRegion ? 'clog-region' : 'empty'}="region${startNum + i}" 
+                        ${hasPos ? 'clog-pos' : 'empty'}="pos${startNum + i}" 
+                        ${hasEx ? 'clog-ex' : 'empty'}="ex${startNum + i}" 
+                        ${hasPage ? 'clog-page' : 'empty'}="ex${startNum + i}">
+                        ${startNum + i}/${i + 1}/${count}
+                        <br>
+                        ${randomStr}
+                        <br>
+                        isVisit: ${isVisit}
+                        <br>
+                        isClick: ${isClick}
+                        <br>
+                        id: item_${startNum + i}
+                        <br>
+                        reg: ${hasPage} | pos: ${hasPos} | ex: ${hasEx} | page: ${hasPage}
+                  </div>`
+
+        $('#app').append(div)
+        i += 1
+      }
+      num = count + startNum
+    }
+
+    // 底部增加更多按钮
+    $('#addMore').click(() => {
+      addItem(num, Math.round(Math.random() * 10))
+    })
+
+    // 页面加载后执行插入列表 + 初始化clog
+    $(() => {
+      // 初始化clog
+      let appid = 'xxxxxxx'
+      let postUrl = 'http://127.0.0.1:3001'
+      window.__clog = new CollectionLog(appid, postUrl)
+      // 插入列表
+      addItem(0, num)
+    })
+  </script>
 </body>
+
 </html>
