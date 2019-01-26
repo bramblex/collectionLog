@@ -40,7 +40,11 @@
     let num = Math.round(Math.random() * 100)   // 随机在页面插入N个列表div
 
     // 插入方法
-    function addItem(startNum = 0, count = 10) {
+    function addItem(startNum = 0, count = 10, prependHr = false) {
+      if (prependHr) {
+        $('#app').append('<hr>')
+      }
+
       let i = 0
       while (i < count) {
         let randomStr = (Math.random() * (Math.random() * Date.now())).toFixed(2)
@@ -68,7 +72,7 @@
                         id: item_${startNum + i}
                         <br>
                         reg: ${hasPage} | pos: ${hasPos} | ex: ${hasEx} | page: ${hasPage}
-                  </div>`
+                  </>`
 
         $('#app').append(div)
         i += 1
@@ -78,17 +82,21 @@
 
     // 底部增加更多按钮
     $('#addMore').click(() => {
-      addItem(num, Math.round(Math.random() * 10))
+      addItem(num, Math.round(Math.random() * 10), true)
     })
 
     // 页面加载后执行插入列表 + 初始化clog
     $(() => {
+      // 插入列表
+      addItem(0, num)
+
       // 初始化clog
       let appid = 'xxxxxxx'
       let postUrl = 'http://127.0.0.1:3001'
       window.__clog = new CollectionLog(appid, postUrl)
-      // 插入列表
-      addItem(0, num)
+
+      // 打印
+      console.log(window.__clog)
     })
   </script>
 </body>

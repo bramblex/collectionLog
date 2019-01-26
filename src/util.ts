@@ -67,7 +67,6 @@ export default {
    * */
   checkBrowser(): any {
     let ua: string = String(window.navigator.userAgent).toLocaleLowerCase()
-    console.log(ua)
     let res: any = {
       browser: '',
       browserVersion: '',

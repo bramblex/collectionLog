@@ -84,7 +84,7 @@ CollectionLog.prototype.makePvId = function () {
   var buf = ''
   for (var ii = 0; ii < 16; ii++) {
     num = rnds[ii]
-    if(ii%4 == 0 && ii > 0) {
+    if (ii % 4 == 0 && ii > 0) {
       buf += '-'
     }
     buf += num.toString(16)
@@ -283,6 +283,7 @@ CollectionLog.prototype.visitLog = function (e) {
   }
 }
 
+// 错误上报
 CollectionLog.prototype.errorLog = function (obj) {
   var extraInfo = ''
   if (obj) {

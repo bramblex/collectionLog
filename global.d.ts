@@ -5,11 +5,19 @@ declare module "*.json" {
   export default value;
 }
 
-// declare namespace navigator {
-//   let language: string;
-//   let browserLanguage: string;
-//   let systemLanguage: string;
-//   let userLanguage: string;
-//   let platform: string;
-//   let userAgent: string;
-// }
+interface Navigator {
+  language: string;
+  browserLanguage: string;
+  systemLanguage: string;
+  userLanguage: string;
+  platform: string;
+  userAgent: string;
+}
+
+interface ObjectConstructor {
+  assign: any
+}
+
+interface window {
+  XMLHttpRequest: any
+}
