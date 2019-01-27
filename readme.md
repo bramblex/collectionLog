@@ -79,7 +79,7 @@ clog-page: 页面名字,默认取document.title
 window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo, page)
 ```
 
----
+---  
  
 ## **服务端相关**:  
 **备注:** 本项目中简单地使用koa2 + MongoDB作为服务端,且配有后台管理页面.  如果有你自己喜欢的语言或者框架,可以使用自己的框架.
