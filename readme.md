@@ -1,17 +1,15 @@
 # collectionLog - 日志收集服务
 
-日志收集服务  
-- 客户端: 页面上引入js,并加入所需参数
-- 服务端: 处理上报请求
+**简介**: 主要是有客户端引入js并初始化后,有加特殊className的元素在点击或者页面滚动后,客户端会发送一个请求到服务端,服务端把客户端发来的请求的参数存放到MongoDB或者其他数据库.  
 
-### 目前支持收集的日志类型:
+**目前支持收集的日志类型**:
 1. 点击
 2. 曝光
 3. 错误日志
 4. 直接发送钩子
 5. pv记录
 
-### 将会收集到的字段:
+**将会收集到的字段**:
 ```
   appid: '',  // appid
   lang: '',   // 客户端语言
@@ -36,18 +34,21 @@
   pid: '',    // pv uuid  
 ```
 
-### 使用方法:  
-1. html页面上加入script:  
-**参数说明**:  
-appid: 自定义一个appid给当前客户端  
-app: 自定义一个app名称给当前客户端  
-url: 发送收集信息到后台的url  
-classifyType: 请求时url是否加上分类,如果开启则填classifyType=y,不开启则不加入该参数
-```
-<script src="/collectionLog.js?appid=123123&app=myapp&url=%2Fcollect" is-clog></script>
-```
+---  
+## **客户端相关**:
 
-2. 在想收集的元素上加入对应class与属性  
+### 使用方法:  
+1. 直接引入dist中的collectionLog.min.js,然后初始化即可  
+```
+<script src="collectionLog.min.js"></script>
+```
+2. 初始化
+```
+let appid = 'xxxxxxx'
+let postUrl = 'http://127.0.0.1:3001'
+window.__clog = new CollectionLog(appid, postUrl)
+```
+3. 在想收集的元素上加入对应class与属性  
 **类名参数说明**:  
 clog-click: 用于收集点击日志  
 clog-visit: 用于收集曝光日志  
@@ -73,7 +74,23 @@ clog-page: 页面名字,默认取document.title
       clog-ex="otherInfo">曝光日志收集</div>
 ```
 
-3. 手动调用发送钩子
+4. ps: 如果另外的需要手动调用发送钩子
 ```
 window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo, page)
 ```
+
+---
+ 
+## **服务端相关**:  
+**备注:** 本项目中简单地使用koa2 + MongoDB作为服务端,且配有后台管理页面.  如果有你自己喜欢的语言或者框架,可以使用自己的框架.
+
+### **请求url**
+1. /click
+2. /visit
+3. /error
+
+### **服务端启动**
+```
+npm run server
+```
+服务会在localhos:3001启动,管理后台页面: localhos:3001/admin

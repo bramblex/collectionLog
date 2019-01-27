@@ -31,11 +31,14 @@ module.exports = (env, argv) => {
     minimizer.push(uglify)
   }
 
+  // outputName
+  const outputName = isProd ? 'collectionLog.min.js' : 'collectionLog.js'
+
   return {
     entry: './src/index.ts',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'collectionLog.js'
+      filename: outputName
     },
     mode: 'production',
     module: {
