@@ -85,9 +85,9 @@ window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo, page)
 **备注:** 本项目中简单地使用koa2 + MongoDB作为服务端,且配有后台管理页面.  如果有你自己喜欢的语言或者框架,可以使用自己的框架.
 
 ### **请求url**
-1. /click
-2. /visit
-3. /error
+1. /collect/click
+2. /collect/visit
+3. /collect/error
 
 ### **服务端启动**
 ```

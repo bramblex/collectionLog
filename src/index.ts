@@ -126,12 +126,12 @@ class CollectionLog {
   // 点击上报
   clickLog(e: any): void {
     let target = e.target
-    let region = target.attributes['clog-region'] && target.attributes['clog-region'].value || 'none'
-    let pos = target.attributes['clog-pos'] && target.attributes['clog-pos'].value || 'none'
+    let region = target.getAttribute('clog-region') || 'none'
+    let pos = target.getAttribute('clog-pos') || 'none'
     let pageX = e.pageX || 'none'
     let pageY = e.pageY || 'none'
-    let extraInfo = target.attributes['clog-ex'] && target.attributes['clog-ex'].value || 'none'
-    let page = target.attributes['clog-page'] && target.attributes['clog-page'].value || document.title || 'none'
+    let extraInfo = target.getAttribute('clog-ex') || 'none'
+    let page = target.getAttribute('clog-page') || document.title || 'none'
     this.sendLog('click', region, pos, pageX, pageY, extraInfo, page)
   }
 
@@ -152,22 +152,26 @@ class CollectionLog {
       let tag: any = this.visitTags[i]
       if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + this.windowHeight) >= (tag.offsetTop + tag.offsetHeight))) {
         hasVisit = true
-        let region = tag.attributes['clog-region'] && tag.attributes['clog-region'].value || '0'
-        let pos = tag.attributes['clog-pos'] && tag.attributes['clog-pos'].value || '0'
+
+        let region = tag.getAttribute('clog-region') || 'none'
+        let pos = tag.getAttribute('clog-pos') || 'none'
         // let pageX = 0
         // let pageY = scrollTop
-        let extraInfo = tag.attributes['clog-ex'] && tag.attributes['clog-ex'].value || '0'
-        let page = tag.attributes['clog-page'] && tag.attributes['clog-page'].value || document.title || ''
-        result.region += (`${i == 0 ? '' : ','}` + region)
-        result.pos += (`${i == 0 ? '' : ','}` + pos)
+        let extraInfo = tag.getAttribute('clog-ex') || 'none'
+        let page = tag.getAttribute('clog-page') || document.title || 'none'
+        result.region += (region + ',')
+        result.pos += (pos + ',')
         // result.pageX.push(pageX)
         // result.pageY.push(pageY)
-        result.extraInfo += (`${i == 0 ? '' : ','}` + extraInfo)
-        result.page += (`${i == 0 ? '' : ','}` + page)
+        result.extraInfo += (extraInfo + ',')
+        result.page += (page + ',')
       }
     }
     if (hasVisit) {
-
+      result.region = result.region.substr(0, result.region.length - 1)
+      result.pos = result.pos.substr(0, result.pos.length - 1)
+      result.extraInfo = result.extraInfo.substr(0, result.extraInfo.length - 1)
+      result.page = result.page.substr(0, result.page.length - 1)
       this.sendLog('visit', result.region, result.pos, result.pageX, result.pageY, result.extraInfo, result.page)
     }
   }
@@ -206,7 +210,7 @@ class CollectionLog {
     }
     // url拼接
     let tempOpt: any = Object.assign({}, this.options)
-    let url: string = this.postUrl + ''
+    let url: string = this.postUrl + `/collect/${type}`
     tempOpt['stay'] = util.getStayLong(this.initialTime)
     tempOpt['type'] = type || ''
     tempOpt['reg'] = region || ''
