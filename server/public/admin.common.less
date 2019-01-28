@@ -1,0 +1,75 @@
+@mainColor: #293c55;
+@bgColor: #F0F0F0;
+@curColor: #da2447;
+@titleColor: #535353;
+@descColor: #999;
+@chartBgColor: #f9f9f9;
+.root {
+  position: relative;
+  .sideList {
+    position: fixed;
+    width: 180px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: @mainColor;
+    .item {
+      padding: 10px 0 10px 20px;
+      display: block;
+      cursor: pointer;
+      &.cur {
+        background-color: @curColor;
+      }
+      i.icon {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 32px;
+        border: 1px solid #fff; // box-sizing: border-box;
+        vertical-align: middle;
+        text-align: center;
+        line-height: 32px;
+        ;
+        color: #fff;
+        font-size: 16px;
+        font-style: normal;
+      }
+      .name {
+        display: inline-block; // height: 32px;
+        vertical-align: middle;
+        color: #fff;
+        margin-left: 10px;
+        font-size: 14px;
+      }
+    }
+  }
+  .mainContainer {
+    margin-left: 180px;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    background-color: @bgColor;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .chart {
+      margin-bottom: 40px;
+      background-color: @chartBgColor;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      padding: 10px;
+      .title {
+        color: @titleColor;
+        font-size: 18px;
+      }
+      .desc {
+        margin-top: 8px;
+        color: @descColor;
+        font-size: 14px;
+      }
+      .chartContent {
+        margin-top: 10px;
+        min-height: 400px;
+      }
+    }
+  }
+}
