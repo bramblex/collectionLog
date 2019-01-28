@@ -40,6 +40,7 @@
 
 ### 使用方法:  
 1. 直接引入dist中的collectionLog.min.js,然后初始化即可  
+备注: 如果没有dist,可以先运行: npm run client:build
 ```
 <script src="collectionLog.min.js"></script>
 ```
