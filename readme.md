@@ -4,7 +4,7 @@
 
 **目前支持收集的日志类型**:
 1. 点击
-2. 曝光
+2. 曝光(仅监控Y轴滚动事件)
 3. 错误日志
 4. 直接发送钩子
 5. pv记录
@@ -26,9 +26,9 @@
   spa: 'no',  // 是否带#号的spa
   uid: '',    // userid, 会取cookie/localstorage/sessionstorage中的uid字段
   stay: 0,    // 逗留时长
-  type: '',   // 日志类型
+  type: '',   // 日志类型: click, visit, error
   reg: '',    // region: 分类信息  
-  pos: '',    // pos: 排序信息,小分类信息  
+  pos: '',    // pos: 排序信息, 小分类信息  
   ex: '',     // 额外信息  
   page: '',   // 页面名称
   now: '',    // 上报时间  

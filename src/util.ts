@@ -70,6 +70,10 @@ export default {
     let res: any = {
       browser: '',
       browserVersion: '',
+      isPhone: false
+    }
+    if (/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/gi.test(ua)) {
+      res.isPhone = true
     }
     if (/(micromessenger)|(windowswechat)/gi.test(ua)) {
       res.browser = 'wechat'

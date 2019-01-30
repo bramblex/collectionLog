@@ -26,24 +26,34 @@
       width: 100%;
       height: 40px;
     }
+
+    .scrollBox {
+      border-top: 2px solid #000;
+      max-height: 300px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 10px 0;
+    }
   </style>
 </head>
 
 <body>
   <div id="app"></div>
   <button id="addMore">add more</button>
+  <button id="addScrollBox">add scroll box</button>
+  <div id="scrollBox" class="scrollBox"></div>
   <script>
     /**
      * 示例代码,可以忽略
      * 主要看页面上的div,他们都具有className = clog-xxx, 而且属性上也有clog相关参数
      * */
 
-    let num = Math.round(Math.random() * 100)   // 随机在页面插入N个列表div
+    let num = Math.round(Math.random() * 10)   // 随机在页面插入N个列表div
 
     // 插入方法
-    function addItem(startNum = 0, count = 10, prependHr = false) {
+    function addItem(startNum = 0, count = 10, prependHr = false, target = '#app') {
       if (prependHr) {
-        $('#app').append('<hr>')
+        $(target).append('<hr>')
       }
 
       let i = 0
@@ -75,7 +85,7 @@
                         reg: ${hasPage} | pos: ${hasPos} | ex: ${hasEx} | page: ${hasPage}
                   </>`
 
-        $('#app').append(div)
+        $(target).append(div)
         i += 1
       }
       num = count + startNum
@@ -98,6 +108,14 @@
 
       // 打印
       console.log(window.__clog)
+    })
+
+    /****************** 更加变态的需求,滚动盒子中的曝光 ******************/
+    $('#addScrollBox').click(() => {
+      // 插入列表
+      addItem(0, 10, false, '#scrollBox')
+      let element = document.getElementById('scrollBox')
+      window.__clog.addScrollWatch(element)
     })
   </script>
 </body>

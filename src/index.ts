@@ -7,8 +7,11 @@ class CollectionLog {
   postUrl: string
   options: any
   visitTags: NodeList
+  windowWidth: number
   windowHeight: number
   isCanPost: boolean
+  isPhone: boolean
+  extraScrollWatchElements: any
   constructor(appId: string = '', postUrl: string = '') {
     this.initialTime = new Date().getTime()
     this.postUrl = postUrl
@@ -34,11 +37,14 @@ class CollectionLog {
       ex: '',
       now: '',
       pid: '',
-      page: ''
+      page: '',
+      isPhone: false
     }
+    this.windowWidth = window.innerWidth || window.screen.availWidth || 0
     this.windowHeight = window.innerHeight || window.screen.availHeight || 0
     this.visitTags = document.querySelectorAll('.clog-visit') || (<any>[])
     this.isCanPost = true
+    this.isPhone = false
     this.initOptions()
   }
 
@@ -59,6 +65,9 @@ class CollectionLog {
     let browser = util.checkBrowser()
     this.options.bro = browser.browser
     this.options.broV = browser.browserVersion
+    this.options.isPhone = browser.isPhone
+    this.isPhone = browser.isPhone
+    this.extraScrollWatchElements = []
     this.addEvent()
   }
 
@@ -82,6 +91,14 @@ class CollectionLog {
         that.clickLog(e)
       }
     })
+
+    // 触摸事件
+    // document.body.removeEventListener('touchend', function () { })
+    // document.body.addEventListener('touchend', function (e: any) {
+    //   if (e.target.className.indexOf('clog-click') > -1) {
+    //     that.clickLog(e)
+    //   }
+    // })
 
     // 曝光事件
     document.removeEventListener('scroll', function () { })
@@ -259,6 +276,102 @@ class CollectionLog {
       }
     }
   }
+
+  // 获取页面上显示的元素
+  getDocumentVisit(): void {
+    this.visitLog(null)
+  }
+
+  // 绑定某个内部滚动对象
+  addScrollWatch(): void {
+    let element: Element = null
+    if (!arguments[0]) {
+      throw new Error('初始化绑定选元素失败,无输入元素')
+      return
+    }
+    if (typeof arguments[0] == 'string') {
+      element = document.querySelector(arguments[0])
+    } else {
+      element = arguments[0]
+    }
+    console.dir(element)
+    let id = element.id || ''
+    let className = element.className || ''
+    if (!(id + className)) {
+      throw new Error('初始化绑定选元素失败,所选元素没有id和class')
+      return
+    }
+    id = id ? '#' + id : ''
+    className = className ? '.' + className : ''
+
+    if (this.extraScrollWatchElements.includes(id + className)) {
+      return
+    } else {
+      this.extraScrollWatchElements.push(id + className)
+    }
+
+    let timer: any = null
+    let that = this
+    element.addEventListener('scroll', (e) => {
+      if (timer) {
+        clearTimeout(timer)
+        timer = setTimeout(function () {
+          afterTimmer(e)
+        }, 500)
+      } else {
+        afterTimmer(e)
+      }
+
+      function afterTimmer(e: any) {
+        timer = setTimeout(function () {
+          let visitTags = document.querySelectorAll(id + className + ' .clog-visit')
+          if (visitTags.length) {
+            console.log(e, 'xxxxxxxxxxxx')
+            let scrollTop = element.scrollTop || 0;
+            let hasVisit = false
+            let result = {
+              region: '',
+              pos: '',
+              pageX: '0',
+              pageY: scrollTop.toString(),
+              extraInfo: '',
+              page: ''
+            }
+
+            for (let i = 0; i < visitTags.length; i++) {
+              let tag: any = visitTags[i]
+              if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + element.clientHeight) >= (tag.offsetTop + tag.offsetHeight))) {
+                hasVisit = true
+
+                let region = tag.getAttribute('clog-region') || 'none'
+                let pos = tag.getAttribute('clog-pos') || 'none'
+                // let pageX = 0
+                // let pageY = scrollTop
+                let extraInfo = tag.getAttribute('clog-ex') || 'none'
+                let page = tag.getAttribute('clog-page') || document.title || 'none'
+                result.region += (region + ',')
+                result.pos += (pos + ',')
+                // result.pageX.push(pageX)
+                // result.pageY.push(pageY)
+                result.extraInfo += (extraInfo + ',')
+                result.page += (page + ',')
+              }
+            }
+            if (hasVisit) {
+              result.region = result.region.substr(0, result.region.length - 1)
+              result.pos = result.pos.substr(0, result.pos.length - 1)
+              result.extraInfo = result.extraInfo.substr(0, result.extraInfo.length - 1)
+              result.page = result.page.substr(0, result.page.length - 1)
+              that.sendLog('visit', result.region, result.pos, result.pageX, result.pageY, result.extraInfo, result.page)
+            }
+
+          }
+        }, 500)
+      }
+
+    })
+  }
+
 }
 
 (<any>window).CollectionLog = CollectionLog
