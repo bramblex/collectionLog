@@ -105,9 +105,7 @@ class CollectionLog {
     document.addEventListener('scroll', function (e: any) {
       if (timer) {
         clearTimeout(timer)
-        timer = setTimeout(function () {
-          afterTimmer()
-        }, 500)
+        afterTimmer()
       } else {
         afterTimmer()
       }
@@ -284,7 +282,7 @@ class CollectionLog {
 
   // 绑定某个内部滚动对象
   addScrollWatch(): void {
-    let element: Element = null
+    let element: any = null
     if (!arguments[0]) {
       throw new Error('初始化绑定选元素失败,无输入元素')
       return
@@ -294,7 +292,6 @@ class CollectionLog {
     } else {
       element = arguments[0]
     }
-    console.dir(element)
     let id = element.id || ''
     let className = element.className || ''
     if (!(id + className)) {
@@ -312,12 +309,10 @@ class CollectionLog {
 
     let timer: any = null
     let that = this
-    element.addEventListener('scroll', (e) => {
+    element.addEventListener('scroll', (e: any) => {
       if (timer) {
         clearTimeout(timer)
-        timer = setTimeout(function () {
-          afterTimmer(e)
-        }, 500)
+        afterTimmer(e)
       } else {
         afterTimmer(e)
       }
@@ -326,7 +321,6 @@ class CollectionLog {
         timer = setTimeout(function () {
           let visitTags = document.querySelectorAll(id + className + ' .clog-visit')
           if (visitTags.length) {
-            console.log(e, 'xxxxxxxxxxxx')
             let scrollTop = element.scrollTop || 0;
             let hasVisit = false
             let result = {
@@ -337,10 +331,11 @@ class CollectionLog {
               extraInfo: '',
               page: ''
             }
-
+            let fatherTop = element.scrollTop
+            let fatherHeight = element.clientHeight
             for (let i = 0; i < visitTags.length; i++) {
               let tag: any = visitTags[i]
-              if ((scrollTop <= (tag.offsetTop + tag.offsetHeight)) && ((scrollTop + element.clientHeight) >= (tag.offsetTop + tag.offsetHeight))) {
+              if ((fatherTop <= (tag.offsetTop + tag.offsetHeight)) && ((fatherTop + fatherHeight) >= (tag.offsetTop + tag.offsetHeight))) {
                 hasVisit = true
 
                 let region = tag.getAttribute('clog-region') || 'none'
@@ -369,6 +364,27 @@ class CollectionLog {
         }, 500)
       }
 
+    })
+  }
+
+  // 添加自定义事件
+  addCustomEvent(eventName: string = '', eventTarget: any = null): void {
+    if (!eventName || !eventTarget) {
+      throw new Error('初始化绑定选元素失败,无输入元素')
+      return
+    }
+    if (typeof eventTarget == 'string') {
+      eventTarget = document.querySelector(eventName)
+    }
+    eventTarget.addEventListener(eventName, (e: any) => {
+      let target = e.target
+      let region = target.getAttribute('clog-region') || 'none'
+      let pos = target.getAttribute('clog-pos') || 'none'
+      let pageX = e.pageX || 'none'
+      let pageY = e.pageY || 'none'
+      let extraInfo = target.getAttribute('clog-ex') || 'none'
+      let page = target.getAttribute('clog-page') || document.title || 'none'
+      this.sendLog('custom', region, pos, pageX, pageY, extraInfo, page)
     })
   }
 

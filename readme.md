@@ -76,11 +76,23 @@ clog-page: 页面名字,默认取document.title
       clog-ex="otherInfo">曝光日志收集</div>
 ```
 
-4. ps: 如果另外的需要手动调用发送钩子
+4. 其他内置方法
+- **CollectionLog.sendLog**: 发送钩子
 ```
-window.__clog.sendLog(type, region, pos, pageX, pageY, extraInfo, page)
+sendLog(type, region, pos, pageX, pageY, extraInfo, page)
 ```
-
+- **CollectionLog.getDocumentVisit**: 立即发送可视范围内的曝光信息
+```
+getDocumentVisit()
+```
+- **CollectionLog.addScrollWatch**: 绑定某个内部滚动对象
+```
+addScrollWatch(element)
+```
+- **CollectionLog.addCustomEvent**: 绑定某个内部滚动对象
+```
+addCustomEvent(eventName, eventTarget)
+```
 ---  
  
 ## **服务端相关**:  
