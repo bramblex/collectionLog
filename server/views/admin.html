@@ -8,6 +8,7 @@
   <title>简易图表分析后台</title>
   <link rel="stylesheet/less" type="text/css" href="/normalize.less" />
   <link rel="stylesheet/less" type="text/css" href="/admin.common.less" />
+  <script src="https://cdn.bootcss.com/babel-polyfill/7.2.5/polyfill.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
   <script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
   <script src="/echarts.min.js"></script>
@@ -21,21 +22,17 @@
     <!-- sideList -->
     <div class="sideList">
       <div id="sideItemWrapper">
-        <!-- <a class="item" href="">
-          <i class="icon"></i>
-          <div class="name">pvuv</div>
-        </a> -->
+        <!-- 
+          <a class="item" href="">
+            <i class="icon"></i>
+            <div class="name">pvuv</div>
+          </a> 
+        -->
       </div>
     </div>
     <!-- mainContainer -->
-    <div class="mainContainer">
-
-      <div class="chart">
-        <div class="title"></div>
-        <div class="desc"></div>
-        <div class="chartContent"></div>
-      </div>
-
+    <div class="mainContainer" id="mainContainer">
+      <div id="demo"></div>
     </div>
   </div>
 

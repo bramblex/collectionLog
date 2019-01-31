@@ -107,4 +107,5 @@ addCustomEvent(eventName, eventTarget)
 ```
 npm run server
 ```
-服务会在localhos:3001启动,管理后台页面: localhos:3001/admin
+服务会在localhos:3001启动  
+管理后台页面(未完成): localhos:3001/admin
