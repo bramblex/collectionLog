@@ -6,4 +6,18 @@ router.prefix('/admin')
 router.get('/', async (ctx, next) => {
   await ctx.render('admin')
 })
+
+// template
+router.get('/template', async (ctx, next) => {
+  if (ctx.request.body && ctx.request.body.name) {
+    await ctx.render(decodeURIComponent(ctx.request.body.name))
+  } else {
+    ctx.status = 404
+    ctx.body = {
+      code: 404,
+      msg: 'API_NOT_EXIST'
+    }
+  }
+})
+
 module.exports = router

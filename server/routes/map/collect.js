@@ -49,4 +49,16 @@ router.get('/error', async (ctx, next) => {
   ctx.body = 'ok'
 })
 
+// custom
+router.get('/custom', async (ctx, next) => {
+  // await collectService.saveCollect(ctx.request.body)
+  let log = new LogModel(ctx.request.body)
+  await log.save((err, res) => {
+    if (err) {
+      console.log(err, res)
+    }
+  })
+  ctx.body = 'ok'
+})
+
 module.exports = router
